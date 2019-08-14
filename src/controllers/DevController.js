@@ -29,10 +29,14 @@ module.exports = {
       `https://api.github.com/users/${username}`
     );
 
-    const { name, bio, avatar_url: avatar } = response.data;
+    const { login, name, bio, avatar_url: avatar } = response.data;
+
+    if (!avatar) {
+      return res.status(400).json({ error: 'User does not have an avatar' });
+    }
 
     const dev = await Dev.create({
-      name,
+      name: name ? name : login,
       user: username,
       bio,
       avatar
